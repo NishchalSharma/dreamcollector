@@ -41,8 +41,10 @@ class team:
         self.count=11
         self.filled=0
         self.GrandScore=0
+        self.currentScore=0
     def updateGrandScore(self):
         self.GrandScore+=self.getTotal()
+        self.currentScore=self.getTotal()
 
     def addplayer(self,player):
         if(self.filled<self.count):
@@ -78,8 +80,10 @@ class selectionlist:
         self.teams=[]
         self.chancelist={}
         self.scorelist={}
+        self.sortedScoreList=[]
         self.playername=[]
         self.file=f
+        self.BingoCount=0
     
 
     def createList(self):
@@ -127,16 +131,33 @@ class selectionlist:
         for p in self.playername:
             sc=math.floor(random.randrange(-1,90))
             self.scorelist[p]=sc
+
     def updateAllTeams(self):
         for t in self.teams:
             for p in t.players:               
                 p.score=self.scorelist[p.name]
+                
         for myp in self.myTeam.players:               
                 myp.score=self.scorelist[myp.name]
+        
+        
     def updateGrandScore(self):
+        self.sortedScoreList=[]
         for t in self.teams:
             t.updateGrandScore()
+            self.sortedScoreList.append(t.currentScore)
         self.myTeam.updateGrandScore()
+
+        self.sortedScoreList.sort(reverse=True)
+        #print(self.sortedScoreList)
+        l=len(self.sortedScoreList)
+        cutoff=int(l*0.25)
+        cutscore=self.sortedScoreList[cutoff]
+        if self.myTeam.currentScore>=cutscore:
+            self.BingoCount+=1
+
+    def ShowBingoCount(self):
+        print("Total Bingo Hits:"+str(self.BingoCount))
 
     def display(self):
         
@@ -203,11 +224,13 @@ l=[0,1,2,3,4,5,6,7,8,9,10]
 #l=[1,2,3,4,8,10,15,13,18,19,21]
 s.createList()
 s.createMyTeam(l,0,1)
-s.createRandomTeams(100)
-for i in range(100000):
+s.createRandomTeams(20)
+for i in range(1000):
     s.assignScore()
     s.updateAllTeams()
     s.updateGrandScore()
+
+s.ShowBingoCount()
 '''
 #s.display()
 print("--------Score List-----------")
@@ -215,7 +238,7 @@ print(s.scorelist)
 print("----------Chance List---------")
 print(s.chancelist)
 '''
-s.dump()
+#s.dump()
 
 
 
