@@ -43,8 +43,9 @@ class team:
         self.GrandScore=0
         self.currentScore=0
     def updateGrandScore(self):
-        self.GrandScore+=self.getTotal()
+        
         self.currentScore=self.getTotal()
+        self.GrandScore+=self.currentScore
 
     def addplayer(self,player):
         if(self.filled<self.count):
@@ -132,7 +133,7 @@ class selectionlist:
     
     def assignScore(self):
         for p in self.playername:
-            sc=math.floor(random.randrange(-1,100))
+            sc=math.floor(random.randrange(-1,20))
             self.scorelist[p]=sc
 
     def updateAllTeams(self):
@@ -171,10 +172,11 @@ class selectionlist:
             self.BingoCount01+=1
 
     def ShowBingoCount(self):
-        print("Total Bingo20 Hits:"+str(self.BingoCount20))
-        print("Total Bingo10 Hits:"+str(self.BingoCount10))
-        print("Total Bingo05 Hits:"+str(self.BingoCount05))
+        print("Total Bingo20 Hits:"+str(self.BingoCount20-self.BingoCount10))
+        print("Total Bingo10 Hits:"+str(self.BingoCount10-self.BingoCount05))
+        print("Total Bingo05 Hits:"+str(self.BingoCount05-self.BingoCount01))
         print("Total Bingo01 Hits:"+str(self.BingoCount01))
+        print("Over all Hits:"+str(self.BingoCount20))
 
     def display(self):
         
@@ -241,7 +243,7 @@ l=[0,1,2,3,4,5,6,7,8,9,10]
 #l=[1,2,3,4,8,10,15,13,18,19,21]
 s.createList()
 s.createMyTeam(l,7,8)
-s.createRandomTeams(20)
+s.createRandomTeams(1000)
 for i in range(100):
     s.assignScore()
     s.updateAllTeams()
