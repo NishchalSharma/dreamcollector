@@ -83,7 +83,10 @@ class selectionlist:
         self.sortedScoreList=[]
         self.playername=[]
         self.file=f
-        self.BingoCount=0
+        self.BingoCount20=0
+        self.BingoCount10=0
+        self.BingoCount05=0
+        self.BingoCount01=0
     
 
     def createList(self):
@@ -129,7 +132,7 @@ class selectionlist:
     
     def assignScore(self):
         for p in self.playername:
-            sc=math.floor(random.randrange(-1,90))
+            sc=math.floor(random.randrange(-1,100))
             self.scorelist[p]=sc
 
     def updateAllTeams(self):
@@ -151,13 +154,27 @@ class selectionlist:
         self.sortedScoreList.sort(reverse=True)
         #print(self.sortedScoreList)
         l=len(self.sortedScoreList)
-        cutoff=int(l*0.25)
-        cutscore=self.sortedScoreList[cutoff]
-        if self.myTeam.currentScore>=cutscore:
-            self.BingoCount+=1
+        cutoff20=int(l*0.20)
+        cutoff10=int(l*0.10)
+        cutoff05=int(l*0.05)
+        cutscore20=self.sortedScoreList[cutoff20]
+        cutscore10=self.sortedScoreList[cutoff10]
+        cutscore05=self.sortedScoreList[cutoff05]
+
+        if self.myTeam.currentScore>=cutscore20:
+            self.BingoCount20+=1
+        if self.myTeam.currentScore>=cutscore10:
+            self.BingoCount10+=1
+        if self.myTeam.currentScore>=cutscore05:
+            self.BingoCount05+=1
+        if self.myTeam.currentScore>=self.sortedScoreList[0]:
+            self.BingoCount01+=1
 
     def ShowBingoCount(self):
-        print("Total Bingo Hits:"+str(self.BingoCount))
+        print("Total Bingo20 Hits:"+str(self.BingoCount20))
+        print("Total Bingo10 Hits:"+str(self.BingoCount10))
+        print("Total Bingo05 Hits:"+str(self.BingoCount05))
+        print("Total Bingo01 Hits:"+str(self.BingoCount01))
 
     def display(self):
         
@@ -223,9 +240,9 @@ s=selectionlist("player.txt")
 l=[0,1,2,3,4,5,6,7,8,9,10]
 #l=[1,2,3,4,8,10,15,13,18,19,21]
 s.createList()
-s.createMyTeam(l,0,1)
+s.createMyTeam(l,7,8)
 s.createRandomTeams(20)
-for i in range(1000):
+for i in range(100):
     s.assignScore()
     s.updateAllTeams()
     s.updateGrandScore()
