@@ -1,5 +1,6 @@
 import random
 import math
+import matplotlib.pyplot as plt
 
 cap_mul=2
 vcap_mul=1.5
@@ -84,6 +85,10 @@ class selectionlist:
         self.sortedScoreList=[]
         self.playername=[]
         self.file=f
+        self.totalmatch=0
+        self.BingoCount50=0
+        self.BingoCount40=0
+        self.BingoCount30=0
         self.BingoCount20=0
         self.BingoCount10=0
         self.BingoCount05=0
@@ -106,6 +111,7 @@ class selectionlist:
         c=0
         a=0
         l=len(self.playername)
+        random.shuffle(self.playername) 
         for p in self.playername:
             r=random.random()*100
             if((11-a)<(l-c)):
@@ -127,7 +133,8 @@ class selectionlist:
         t.players[x].makeCap()
         t.players[y].makeVCap()
         return(t)
-    def createRandomTeams(self,n):
+    def createRandomTeams(self,n,t):
+        self.totalmatch=t
         for i in range(n):
             self.teams.append(self.generateTeam())
     
@@ -155,13 +162,25 @@ class selectionlist:
         self.sortedScoreList.sort(reverse=True)
         #print(self.sortedScoreList)
         l=len(self.sortedScoreList)
+        cutoff50=int(l*0.50)
+        cutoff40=int(l*0.40)
+        cutoff30=int(l*0.30)
         cutoff20=int(l*0.20)
         cutoff10=int(l*0.10)
         cutoff05=int(l*0.05)
+        cutscore50=self.sortedScoreList[cutoff50]
+        cutscore40=self.sortedScoreList[cutoff40]
+        cutscore30=self.sortedScoreList[cutoff30]
         cutscore20=self.sortedScoreList[cutoff20]
         cutscore10=self.sortedScoreList[cutoff10]
         cutscore05=self.sortedScoreList[cutoff05]
 
+        if self.myTeam.currentScore>=cutscore50:
+            self.BingoCount50+=1
+        if self.myTeam.currentScore>=cutscore40:
+            self.BingoCount40+=1
+        if self.myTeam.currentScore>=cutscore30:
+            self.BingoCount30+=1
         if self.myTeam.currentScore>=cutscore20:
             self.BingoCount20+=1
         if self.myTeam.currentScore>=cutscore10:
@@ -172,18 +191,40 @@ class selectionlist:
             self.BingoCount01+=1
 
     def ShowBingoCount(self):
-        print("Total Bingo20 Hits:"+str(self.BingoCount20-self.BingoCount10))
-        print("Total Bingo10 Hits:"+str(self.BingoCount10-self.BingoCount05))
-        print("Total Bingo05 Hits:"+str(self.BingoCount05-self.BingoCount01))
-        print("Total Bingo01 Hits:"+str(self.BingoCount01))
-        print("Over all Hits:"+str(self.BingoCount20))
+
+        x5=self.BingoCount50-self.BingoCount40
+        x4=self.BingoCount40-self.BingoCount30
+        x3=self.BingoCount30-self.BingoCount20
+        x2=self.BingoCount20-self.BingoCount10
+        x1=self.BingoCount10-self.BingoCount05
+        x0=self.BingoCount05-self.BingoCount01
+        x=self.BingoCount01
+        fail=self.totalmatch-self.BingoCount50
+
+        print("Total Bingo50 Hits:"+str(x5))
+        print("Total Bingo40 Hits:"+str(x4))
+        print("Total Bingo30 Hits:"+str(x3))
+        print("Total Bingo20 Hits:"+str(x2))
+        print("Total Bingo10 Hits:"+str(x1))
+        print("Total Bingo05 Hits:"+str(x0))
+        print("Total grand Hits:"+str(x))
+        print("Over all Hits:"+str(self.BingoCount50))
+        print("Misses="+str(fail))
+
+        plt.bar([1, 2, 3, 4,5,6,7,8],[x,x0, x1, x2, x3,x4,x5,fail])
+        plt.show()
 
     def display(self):
         
         for t in self.teams:
             t.displayTotal()
         self.myTeam.displayTotal()
-
+    def runMatch(self):
+        for i in range(self.totalmatch):
+            s.assignScore()
+            s.updateAllTeams()
+            s.updateGrandScore()
+        
     def createMyTeam(self,l,c,vc):
         t=team()
         x=0
@@ -243,12 +284,8 @@ l=[0,1,2,3,4,5,6,7,8,9,10]
 #l=[1,2,3,4,8,10,15,13,18,19,21]
 s.createList()
 s.createMyTeam(l,7,8)
-s.createRandomTeams(1000)
-for i in range(100):
-    s.assignScore()
-    s.updateAllTeams()
-    s.updateGrandScore()
-
+s.createRandomTeams(20,1000)
+s.runMatch()
 s.ShowBingoCount()
 '''
 #s.display()
